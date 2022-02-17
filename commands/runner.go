@@ -16,15 +16,13 @@ type runner struct {
 
 func Runner(app contracts.Application) contracts.Command {
 	return &runner{
-		Command: commands.Base("run {--http.port:http端口号=8000}", "启动 goal"),
+		Command: commands.Base("run", "启动 goal"),
 		app:     app,
 	}
 }
 
 func (this *runner) Handle() interface{} {
 	path := this.app.Get("path").(string)
-
-	_ = os.Setenv("http.port", this.GetString("http.port"))
 
 	pidPath := path + "/goal.pid"
 	// 写入 pid 文件
