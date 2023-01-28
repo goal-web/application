@@ -15,8 +15,8 @@ func Singleton() contracts.Application {
 	}
 
 	instance = &application{
-		Container: container.New(),
-		services:  make([]contracts.ServiceProvider, 0),
+		Container:        container.New(),
+		serviceProviders: make([]contracts.ServiceProvider, 0),
 	}
 
 	return instance

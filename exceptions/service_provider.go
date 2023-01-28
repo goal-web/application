@@ -8,6 +8,10 @@ type ServiceProvider struct {
 	DontReportExceptions []contracts.Exception
 }
 
+func NewService(DontReportExceptions []contracts.Exception) contracts.ServiceProvider {
+	return &ServiceProvider{DontReportExceptions}
+}
+
 func (provider ServiceProvider) Start() error {
 	return nil
 }

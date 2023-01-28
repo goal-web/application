@@ -11,26 +11,42 @@ const EnvProduction = "production"
 
 type application struct {
 	contracts.Container
-	services []contracts.ServiceProvider
+	serviceProviders []contracts.ServiceProvider
+	exceptionHandler contracts.ExceptionHandler
+	config           contracts.Config
 }
 
-func (this *application) Environment() string {
-	return this.Get("config").(contracts.Config).Get("app").(Config).Env
+func (app *application) GetExceptionHandler() contracts.ExceptionHandler {
+	if app.exceptionHandler == nil {
+		app.exceptionHandler = app.Get("exception.handler").(contracts.ExceptionHandler)
+	}
+	return app.exceptionHandler
 }
 
-func (this *application) IsProduction() bool {
-	return this.Environment() == EnvProduction
+func (app *application) GetConfig() contracts.Config {
+	if app.config == nil {
+		app.config = app.Get("config").(contracts.Config)
+	}
+	return app.config
 }
 
-func (this *application) Debug() bool {
-	return this.Get("config").(contracts.Config).Get("app").(Config).Debug
+func (app *application) Environment() string {
+	return app.GetConfig().Get("app").(Config).Env
 }
 
-func (this *application) Start() map[string]error {
+func (app *application) IsProduction() bool {
+	return app.Environment() == EnvProduction
+}
+
+func (app *application) Debug() bool {
+	return app.GetConfig().Get("app").(Config).Debug
+}
+
+func (app *application) Start() map[string]error {
 	errors := make(map[string]error)
-	queue := parallel.NewParallel(len(this.services))
+	queue := parallel.NewParallel(len(app.serviceProviders))
 
-	for _, service := range this.services {
+	for _, service := range app.serviceProviders {
 		(func(service contracts.ServiceProvider) {
 			_ = queue.Add(func() interface{} {
 				return service.Start()
@@ -41,24 +57,25 @@ func (this *application) Start() map[string]error {
 	results := queue.Wait()
 	for serviceIndex, result := range results {
 		if err, isErr := result.(error); isErr {
-			errors[utils.GetTypeKey(reflect.TypeOf(this.services[serviceIndex]))] = err
+			errors[utils.GetTypeKey(reflect.TypeOf(app.serviceProviders[serviceIndex]))] = err
 		}
 	}
 
 	return errors
 }
 
-func (this *application) Stop() {
-	// 倒序执行各服务的关闭
-	for serviceIndex := len(this.services) - 1; serviceIndex > -1; serviceIndex-- {
-		this.services[serviceIndex].Stop()
+// Stop 倒序执行各服务的关闭
+func (app *application) Stop() {
+	for serviceIndex := len(app.serviceProviders) - 1; serviceIndex > -1; serviceIndex-- {
+		app.serviceProviders[serviceIndex].Stop()
 	}
 }
 
-func (this *application) RegisterServices(services ...contracts.ServiceProvider) {
-	this.services = append(this.services, services...)
+// RegisterServices 顺序启动各个服务
+func (app *application) RegisterServices(services ...contracts.ServiceProvider) {
+	app.serviceProviders = append(app.serviceProviders, services...)
 
 	for _, service := range services {
-		service.Register(this)
+		service.Register(app)
 	}
 }
