@@ -18,7 +18,7 @@ func (s ShouldReportException) Error() string {
 	return "testing"
 }
 
-func (s ShouldReportException) GetPrevious() *contracts.Exception {
+func (s ShouldReportException) GetPrevious() contracts.Exception {
 	return nil
 }
 

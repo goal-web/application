@@ -4,9 +4,9 @@ go 1.17
 
 require (
 	github.com/goal-web/config v0.1.4
-	github.com/goal-web/container v0.1.6
-	github.com/goal-web/contracts v0.1.65
-	github.com/goal-web/supports v0.1.31
+	github.com/goal-web/container v0.1.7
+	github.com/goal-web/contracts v0.1.66
+	github.com/goal-web/supports v0.1.32
 	github.com/qbhy/parallel v1.3.0
 	github.com/stretchr/testify v1.7.0
 )
