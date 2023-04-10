@@ -2,7 +2,6 @@ package tests
 
 import (
 	"github.com/goal-web/application"
-	"github.com/goal-web/application/exceptions"
 	"github.com/goal-web/config"
 	"github.com/goal-web/contracts"
 	exceptions2 "github.com/goal-web/supports/exceptions"
@@ -28,17 +27,19 @@ func TestMakeApplication(t *testing.T) {
 	userHome, _ := os.UserHomeDir()
 
 	app.RegisterServices(
-		config.NewService("testing", ".", map[string]contracts.ConfigProvider{
-			"app": application.ConfigProvider(hostname, userHome),
+		config.NewService(config.NewDotEnv(config.File("testing.env")), map[string]contracts.ConfigProvider{
+			"app": app.ConfigProvider(hostname, userHome),
 		}),
-		exceptions.NewService([]contracts.Exception{
+		exceptions2.NewService([]contracts.Exception{
 			exceptions2.New(""),
 		}),
 	)
 
 	app.Start()
 
-	assert.Equal(t, app.GetConfig().Get("app.name"), "testing111")
+	app.Call(func(handler contracts.ExceptionHandler, config contracts.Config) {
+		assert.True(t, handler.ShouldReport(ShouldReportException{}))
 
-	assert.True(t, app.GetExceptionHandler().ShouldReport(ShouldReportException{}))
+		assert.True(t, config.GetString("app.name") == "testing111")
+	})
 }
