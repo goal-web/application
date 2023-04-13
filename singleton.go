@@ -1,7 +1,6 @@
 package application
 
 import (
-	"github.com/goal-web/container"
 	"github.com/goal-web/contracts"
 	"sync"
 )
@@ -11,15 +10,12 @@ var (
 	once     sync.Once
 )
 
-func Singleton() contracts.Application {
+func Singleton(debug ...bool) contracts.Application {
 	if instance != nil {
 		return instance
 	}
 	once.Do(func() {
-		instance = &application{
-			Container:        container.New(),
-			serviceProviders: make([]contracts.ServiceProvider, 0),
-		}
+		instance = New(debug...)
 	})
 
 	return instance
