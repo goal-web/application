@@ -2,9 +2,7 @@ module github.com/goal-web/application
 
 go 1.23.1
 
-require (
-	github.com/stretchr/testify v1.8.1
-)
+require github.com/stretchr/testify v1.8.1
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
