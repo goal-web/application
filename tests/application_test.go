@@ -1,12 +1,13 @@
 package tests
 
 import (
+	"testing"
+
 	"github.com/goal-web/application"
 	"github.com/goal-web/config"
 	"github.com/goal-web/contracts"
 	exceptions2 "github.com/goal-web/supports/exceptions"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 type ShouldReportException struct {

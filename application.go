@@ -1,8 +1,9 @@
 package application
 
 import (
-	"github.com/goal-web/contracts"
 	"sync"
+
+	"github.com/goal-web/contracts"
 )
 
 const EnvProduction = "production"
