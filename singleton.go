@@ -1,30 +1,23 @@
 package application
 
 import (
-	"github.com/goal-web/contracts"
 	"sync"
+
+	"github.com/goal-web/contracts"
+	"github.com/goal-web/supports/utils"
 )
 
-var (
-	instance contracts.Application
-	once     sync.Once
-)
+var singleton contracts.Application
+var once sync.Once
 
-func Singleton(debug ...bool) contracts.Application {
-	if instance != nil {
-		return instance
-	}
+func Default(debug ...bool) contracts.Application {
 	once.Do(func() {
-		instance = New(debug...)
+		singleton = New(utils.DefaultBool(debug, true))
 	})
 
-	return instance
+	return singleton
 }
 
-func SetSingleton(app contracts.Application) {
-	instance = app
-}
-
-func Get(key string, args ...any) any {
-	return Singleton().Get(key, args...)
+func Get(key string) any {
+	return Default().Get(key)
 }
