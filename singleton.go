@@ -18,6 +18,6 @@ func Default(debug ...bool) contracts.Application {
 	return singleton
 }
 
-func Get(key string) any {
-	return Default().Get(key)
+func Get(key string, args ...any) any {
+	return Default().Get(key, args...)
 }
